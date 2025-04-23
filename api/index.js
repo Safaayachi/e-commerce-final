@@ -1,38 +1,31 @@
+// api/index.js - Modified for Vercel compatibility
 const express = require("express");
 const connectDB = require("./config/db");
-const authRoutes = require("./routes/auth");
-const productRoutes = require("./routes/products");
-const orderRoutes = require("./routes/orders");
-
-// Initialize express app
 const app = express();
 
 // Middleware
 app.use(express.json());
 
-// Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/products", productRoutes);
-app.use("/api/orders", orderRoutes);
+// Connect to database
+connectDB()
+	.then(() => {
+		console.log("MongoDB Connected...");
+	})
+	.catch((err) => {
+		console.error("Database connection failed:", err);
+	});
 
-// Connect to database only when handling requests
-app.use(async (req, res, next) => {
-	try {
-		await connectDB();
-		next();
-	} catch (error) {
-		console.error("Database connection error:", error);
-		res.status(500).json({
-			message: "Server error - Database connection failed",
-		});
-	}
-});
+// Your routes
+app.use("/api/products", require("./routes/products"));
+// Other routes...
 
-// For local development only
-if (process.env.NODE_ENV !== "production") {
-	const PORT = process.env.PORT || 3001;
-	app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Only start server if not running in Vercel environment
+if (process.env.NODE_ENV !== "production" && !process.env.VERCEL) {
+	const PORT = process.env.PORT || 3002; // Changed to 3002 to avoid conflict
+	app.listen(PORT, () => {
+		console.log(`Server running on port ${PORT}`);
+	});
 }
 
-// Export for serverless use
+// Export for Vercel serverless function
 module.exports = app;
