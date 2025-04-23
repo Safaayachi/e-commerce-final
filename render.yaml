@@ -1,0 +1,22 @@
+services:
+        - type: web
+          name: e-commerce-backend
+          env: node
+          region: oregon # You can change this to your preferred region
+          plan: starter # Choose appropriate plan: free, starter, etc.
+          buildCommand: npm install
+          startCommand: node index.js # Adjust if your main file is different
+          healthCheckPath: /api/health # Create a simple health check endpoint
+          envVars:
+                  - key: NODE_ENV
+                    value: production
+                  - key: PORT
+                    value: 3001
+                  - fromGroup: mongodb-config
+          autoDeploy: true
+
+envVarGroups:
+        - name: mongodb-config
+          envVars:
+                  - key: MONGO_URI
+                    sync: false # This needs to be manually entered in Render dashboard for security

@@ -2,7 +2,7 @@
 	"name": "ecommerce-api",
 	"version": "1.0.0",
 	"description": "E-commerce REST API",
-	"main": "api/index.js",
+	"main": "app.js",
 	"scripts": {
 		"start": "node app.js",
 		"dev": "nodemon app.js"
